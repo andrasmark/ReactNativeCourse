@@ -10,6 +10,7 @@ function CategoriesScreen({ navigation }) {
         categoryId: itemData.item.id,
       });
     }
+    
     return (
       <CategoryGridTile
         title={itemData.item.title}
