@@ -1,24 +1,14 @@
 import { Pressable, View, Image, Text, StyleSheet } from "react-native";
+import { Colors } from "../../constants/colors";
 
 function PlaceItem({ place, onSelect }) {
-  // Defensive: if no place provided, show a small placeholder to avoid crashes
-  if (!place) {
-    return (
-      <View style={styles.fallback}>
-        <Text style={styles.fallbackText}>No place data</Text>
-      </View>
-    );
-  }
-
   return (
-    <Pressable onPress={onSelect} style={styles.container}>
-      {place.imageUri ? (
-        <Image source={{ uri: place.imageUri }} style={styles.image} />
-      ) : (
-        <View style={[styles.image, styles.placeholder]}>
-          <Text style={styles.placeholderText}>No image</Text>
-        </View>
-      )}
+    <Pressable
+      style={({ pressed }) => [styles.item, pressed && styles.pressed]}
+      onPress={onSelect}
+    >
+      <Image style={styles.image}source={{ uri: place.imageUri }} />
+
       <View style={styles.info}>
         <Text style={styles.title}>{place.title}</Text>
         <Text style={styles.address}>{place.address}</Text>
@@ -30,14 +20,38 @@ function PlaceItem({ place, onSelect }) {
 export default PlaceItem;
 
 const styles = StyleSheet.create({
-  container: { flexDirection: 'row', alignItems: 'center', padding: 8 },
-  image: { width: 64, height: 64, borderRadius: 6, marginRight: 12, backgroundColor: '#eee' },
-  placeholder: { justifyContent: 'center', alignItems: 'center' },
-  placeholderText: { color: '#666', fontSize: 12 },
-  info: { flex: 1 },
-  title: { fontWeight: '600' },
-  address: { color: '#666' },
-  fallback: { padding: 12, alignItems: 'center' },
-  fallbackText: { color: '#666' },
+  item: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    borderRadius: 6,
+    marginVertical: 12,
+    backgroundColor: Colors.primary500,
+    elevation: 2,
+    shadowColor: "black",
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 1, height: 1 },
+    shadowRadius: 2,
+  },
+  pressed: {
+    opacity: 0.9,
+  },
+  image: {
+    flex: 1,
+    borderBottomLeftRadius: 4,
+    borderTopLeftRadius: 4,
+    height: 100,
+  },
+  info: {
+    flex: 2,
+    padding: 12,
+  },
+  title: {
+    fontWeight: "bold",
+    fontSize: 18,
+    color: Colors.gray700,
+  },
+  address: {
+    fontSize: 12,
+    color: Colors.gray700,
+  },
 });
-
