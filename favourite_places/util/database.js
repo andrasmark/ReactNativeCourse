@@ -151,11 +151,23 @@ export async function fetchPlaceDetails(id) {
     const db = await openDatabaseAsync("places.db");
 
     if (db && typeof db.getFirstAsync === "function") {
-      const place = await db.getFirstAsync(
+      const dbPlace = await db.getFirstAsync(
         "SELECT * FROM places WHERE id = ?",
         [id]
       );
-      console.log("Fetch place details result:", place);
+      console.log("Fetch place details result:", dbPlace);
+      if (!dbPlace) return null;
+      
+      const place = new Place(
+        dbPlace.title,
+        dbPlace.imageUri,
+        {
+          address: dbPlace.address,
+          lat: dbPlace.lat,
+          lng: dbPlace.lng,
+        },
+        dbPlace.id
+      );
       return place;
     }
 
@@ -167,7 +179,22 @@ export async function fetchPlaceDetails(id) {
             [id],
             (_, result) => {
               console.log("Fetch place details result:", result);
-              resolve(result.rows._array[0]);
+              const dbPlace = result.rows._array[0];
+              if (!dbPlace) {
+                resolve(null);
+                return;
+              }
+              const place = new Place(
+                dbPlace.title,
+                dbPlace.imageUri,
+                {
+                  address: dbPlace.address,
+                  lat: dbPlace.lat,
+                  lng: dbPlace.lng,
+                },
+                dbPlace.id
+              );
+              resolve(place);
             },
             (_, error) => {
               reject(error);
@@ -177,7 +204,9 @@ export async function fetchPlaceDetails(id) {
       });
     }
 
-    throw new Error("Database does not expose getFirstAsync or transaction method.");
+    throw new Error(
+      "Database does not expose getFirstAsync or transaction method."
+    );
   } catch (err) {
     console.error("Error fetching place details:", err);
     return Promise.reject(err);

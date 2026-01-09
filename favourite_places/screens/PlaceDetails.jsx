@@ -4,11 +4,14 @@ import OutlinedButton from "../components/UI/OutlinedButton";
 import { Colors } from "../constants/colors";
 import { fetchPlaceDetails } from "../util/database";
 
-
-
 function PlaceDetails({ route, navigation }) {
   const [fetchedPlace, setFetchedPlace] = useState();
-  function showOnMapHandler() {}
+  function showOnMapHandler() {
+    navigation.navigate("Map", {
+      initialLat: fetchedPlace.location.lat,
+      initialLng: fetchedPlace.location.lng,
+    });
+  }
 
   const selectedPlaceId = route.params.placeId;
 
@@ -49,10 +52,10 @@ export default PlaceDetails;
 
 const styles = StyleSheet.create({
   fallback: {
-    flex:1,
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },  
+  },
   image: {
     height: "35%",
     minHeight: 300,
