@@ -137,9 +137,49 @@ export async function fetchPlaces() {
       });
     }
 
-    throw new Error("Database does not expose getAllAsync or transaction method.");
+    throw new Error(
+      "Database does not expose getAllAsync or transaction method."
+    );
   } catch (err) {
     console.error("Error fetching places:", err);
+    return Promise.reject(err);
+  }
+}
+
+export async function fetchPlaceDetails(id) {
+  try {
+    const db = await openDatabaseAsync("places.db");
+
+    if (db && typeof db.getFirstAsync === "function") {
+      const place = await db.getFirstAsync(
+        "SELECT * FROM places WHERE id = ?",
+        [id]
+      );
+      console.log("Fetch place details result:", place);
+      return place;
+    }
+
+    if (db && typeof db.transaction === "function") {
+      return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "SELECT * FROM places WHERE id = ?",
+            [id],
+            (_, result) => {
+              console.log("Fetch place details result:", result);
+              resolve(result.rows._array[0]);
+            },
+            (_, error) => {
+              reject(error);
+            }
+          );
+        });
+      });
+    }
+
+    throw new Error("Database does not expose getFirstAsync or transaction method.");
+  } catch (err) {
+    console.error("Error fetching place details:", err);
     return Promise.reject(err);
   }
 }

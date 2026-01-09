@@ -9,6 +9,7 @@ import { Colors } from "./constants/colors";
 import Map from "./screens/Map";
 import { init } from "./util/database";
 import AppLoading from "expo-app-loading";
+import PlaceDetails from "./screens/PlaceDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,7 +20,9 @@ export default function App() {
     init()
       .then(() => {
         setDbInitialized(true);
-        console.log("Database initialized succesfully---------------------------------------------------------------------------!");
+        console.log(
+          "Database initialized succesfully---------------------------------------------------------------------------!"
+        );
       })
       .catch((err) => {
         console.log("Database initialization failed.", err);
@@ -62,6 +65,13 @@ export default function App() {
             options={{ title: "Add a New Place" }}
           />
           <Stack.Screen name="Map" component={Map} />
+          <Stack.Screen
+            name="PlaceDetails"
+            component={PlaceDetails}
+            options={{
+              title: "Loading Place...",
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </>

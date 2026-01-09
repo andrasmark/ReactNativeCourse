@@ -50,9 +50,16 @@ export async function openDatabaseAsync(name = 'database') {
     return res.rows && res.rows._array ? res.rows._array : [];
   }
 
+  async function getFirstAsync(sql, params = []) {
+    const res = await _executeSqlAsync(sql, params);
+    const arr = res.rows && res.rows._array ? res.rows._array : [];
+    return arr.length > 0 ? arr[0] : null;
+  }
+
   return {
     execAsync,
     runAsync,
     getAllAsync,
+    getFirstAsync,
   };
 }
